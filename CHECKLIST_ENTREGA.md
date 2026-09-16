@@ -2,8 +2,8 @@
 
 - [x] Repositorio GitHub publico criado.
 - [x] URLs do OTA configuradas para `camposdigo/cp2-motiva-ota`.
-- [ ] Workflow do GitHub Actions concluido sem erros.
-- [ ] `ota/firmware_v2.bin` existe no GitHub e abre por URL direta.
+- [x] Workflow do GitHub Actions concluido sem erros.
+- [x] `ota/firmware_v2.bin` existe no GitHub e abre por URL direta.
 - [x] `ota/version.json` aponta para o `.bin` correto.
 - [ ] Wokwi inicia no FW 1.0.
 - [ ] Tres sessoes do FW 1.0 executadas antes da primeira tentativa OTA.
