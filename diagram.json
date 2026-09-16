@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "author": "Rodrigo Campos Cordeiro",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": -20,
+      "left": -40,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-rgb-led",
+      "id": "rgb1",
+      "top": 15,
+      "left": 260,
+      "attrs": {
+        "common": "cathode",
+        "label": "STATUS"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rr",
+      "top": -5,
+      "left": 165,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rg",
+      "top": 35,
+      "left": 165,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "rb",
+      "top": 75,
+      "left": 165,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:25", "rr:1", "red", [] ],
+    [ "rr:2", "rgb1:R", "red", [] ],
+    [ "esp:26", "rg:1", "green", [] ],
+    [ "rg:2", "rgb1:G", "green", [] ],
+    [ "esp:27", "rb:1", "blue", [] ],
+    [ "rb:2", "rgb1:B", "blue", [] ],
+    [ "rgb1:COM", "esp:GND.1", "black", [] ]
+  ],
+  "dependencies": {}
+}
