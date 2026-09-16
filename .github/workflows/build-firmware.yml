@@ -1,0 +1,54 @@
+name: Compilar firmware ESP32
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "firmware_v1/**"
+      - "firmware_v2/**"
+      - ".github/workflows/build-firmware.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Instalar core ESP32
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+
+      - name: Compilar Firmware 1.0
+        run: |
+          mkdir -p build_v1
+          arduino-cli compile --fqbn esp32:esp32:esp32 --output-dir build_v1 firmware_v1
+
+      - name: Compilar Firmware 2.0
+        run: |
+          mkdir -p build_v2 ota
+          arduino-cli compile --fqbn esp32:esp32:esp32 --output-dir build_v2 firmware_v2
+          cp build_v2/firmware_v2.ino.bin ota/firmware_v2.bin
+
+      - name: Publicar firmware_v2.bin no repositorio
+        run: |
+          if [ -z "$(git status --porcelain -- ota/firmware_v2.bin)" ]; then
+            echo "O binario ja esta atualizado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ota/firmware_v2.bin
+          git commit -m "build: atualiza firmware_v2.bin"
+          git push
