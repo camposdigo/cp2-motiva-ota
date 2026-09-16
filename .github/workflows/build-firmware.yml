@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Instalar Arduino CLI
         uses: arduino/setup-arduino-cli@v2
@@ -37,18 +39,22 @@ jobs:
 
       - name: Compilar Firmware 2.0
         run: |
-          mkdir -p build_v2 ota
+          mkdir -p build_v2
           arduino-cli compile --fqbn esp32:esp32:esp32 --output-dir build_v2 firmware_v2
-          cp build_v2/firmware_v2.ino.bin ota/firmware_v2.bin
+          cp build_v2/firmware_v2.ino.bin /tmp/firmware_v2.bin
 
       - name: Publicar firmware_v2.bin no repositorio
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p ota
+          cp /tmp/firmware_v2.bin ota/firmware_v2.bin
           if [ -z "$(git status --porcelain -- ota/firmware_v2.bin)" ]; then
             echo "O binario ja esta atualizado."
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ota/firmware_v2.bin
           git commit -m "build: atualiza firmware_v2.bin"
-          git push
+          git push origin main
